@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Сын</title>
+<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+    <style>
+        @font-face {
+            font-family: 'Smeshariki Covers';
+            src: url('SmesharikiCoversRegular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000 url('bg.jpg') center/cover no-repeat fixed;
+            color: #fff;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        h1 {
+            font-size: 2.7rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+            letter-spacing: -0.5px;
+        }
+
+        .counter {
+            font-size: 1.65rem;
+            line-height: 1.8;
+            font-weight: 400;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+            animation: breathe 8s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.015); }
+        }
+
+        .counter > div {
+            margin: 0.3rem 0;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .counter.updating > div {
+            opacity: 0.5;
+        }
+
+        .loading-dots .dot {
+            animation: blink 1.4s infinite;
+            display: inline-block;
+        }
+        @keyframes blink {
+            0%, 40% { opacity: 0; }
+            60%, 100% { opacity: 1; }
+        }
+
+        /* Анимация: звёздочки при году */
+        .celebration-star {
+            position: absolute;
+            font-size: 1.6rem;
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+            animation: floatStar 2.5s ease-out forwards;
+        }
+
+        @keyframes floatStar {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(30deg); opacity: 0; }
+        }
+
+        /* Анимация: луна при новом месяце */
+        .celebration-moon {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+            animation: fallMoon 3s ease-out forwards;
+        }
+
+        @keyframes fallMoon {
+            0% { transform: translateY(-100px); opacity: 0.9; }
+            100% { transform: translateY(0); opacity: 0; }
+        }
+
+        @media (max-width: 390px) {
+            h1 { font-size: 2.4rem; }
+            .counter { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Нашему сыночку</h1>
+    <div class="counter" id="counter">
+        Загрузка<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>
+
+<script>
+    const birthDate = new Date('2025-09-21T19:20:00');
+    let prevYears = 0;
+    let prevTotalMonths = -1;
+
+    function pluralize(number, one, few, many) {
+        let n = Math.abs(number) % 100;
+        let n1 = n % 10;
+        if (n > 10 && n < 20) return many;
+        if (n1 > 1 && n1 < 5) return few;
+        if (n1 === 1) return one;
+        return many;
+    }
+
+    function getDaysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function calculateAge(birth, now) {
+        let years = 0;
+        let months = 0;
+        let days = 0;
+
+        let current = new Date(birth);
+
+        // Полные года
+        while (true) {
+            let candidate = new Date(current);
+            candidate.setFullYear(candidate.getFullYear() + 1);
+            candidate.setHours(birth.getHours(), birth.getMinutes(), birth.getSeconds(), 0);
+            if (candidate <= now) {
+                current = candidate;
+                years++;
+            } else {
+                break;
+            }
+        }
+
+        // Полные месяцы
+        while (true) {
+            let nextMonth = current.getMonth() + 1;
+            let nextYear = current.getFullYear();
+            if (nextMonth > 11) {
+                nextMonth = 0;
+                nextYear++;
+            }
+            let daysInNext = getDaysInMonth(nextYear, nextMonth);
+            let dayToSet = Math.min(current.getDate(), daysInNext);
+            let candidate = new Date(nextYear, nextMonth, dayToSet, birth.getHours(), birth.getMinutes(), birth.getSeconds());
+            if (candidate <= now) {
+                current = candidate;
+                months++;
+            } else {
+                break;
+            }
+        }
+
+        // Остаток — дни
+        let diffTime = now - current;
+        if (diffTime < 0) diffTime = 0;
+        days = Math.floor(diffTime / (24 * 60 * 60 * 1000));
+
+        // Точное время остатка
+        let remainingMs = diffTime - days * 24 * 60 * 60 * 1000;
+        let hours = Math.floor(remainingMs / (60 * 60 * 1000));
+        let minutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+        let seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
+
+        // Общее количество дней с момента рождения
+        const totalDaysSinceBirth = Math.floor((now - birth) / (24 * 60 * 60 * 1000));
+
+        return { years, months, days, hours, minutes, seconds, totalMonths: years * 12 + months, totalDaysSinceBirth };
+    }
+
+    function triggerStarCelebration() {
+        const stars = ['✨', '🌟', '💫'];
+        for (let i = 0; i < 3; i++) {
+            const star = document.createElement('div');
+            star.className = 'celebration-star';
+            star.textContent = stars[Math.floor(Math.random() * stars.length)];
+            star.style.left = `${20 + Math.random() * 60}%`;
+            star.style.top = '40%';
+            star.style.animationDelay = `${i * 0.2}s`;
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 3000);
+        }
+        if (window.navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]);
+        }
+    }
+
+    function triggerMoonCelebration() {
+        const moon = document.createElement('div');
+        moon.className = 'celebration-moon';
+        moon.textContent = '🌙';
+        moon.style.left = '50%';
+        moon.style.transform = 'translateX(-50%)';
+        document.body.appendChild(moon);
+        setTimeout(() => moon.remove(), 3100);
+    }
+
+    function updateCounter() {
+        const now = new Date();
+        const diffMs = now - birthDate;
+        const counterEl = document.getElementById('counter');
+        counterEl.classList.add('updating');
+
+        setTimeout(() => {
+            if (diffMs <= 0) {
+                counterEl.innerHTML = `
+                    <div>0 ${pluralize(0, 'месяц', 'месяца', 'месяцев')}</div>
+                    <div>0 ${pluralize(0, 'день', 'дня', 'дней')}</div>
+                    <div>0 ${pluralize(0, 'час', 'часа', 'часов')}</div>
+                    <div>0 ${pluralize(0, 'минута', 'минуты', 'минут')}</div>
+                    <div>0 ${pluralize(0, 'секунда', 'секунды', 'секунд')}</div>
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
+                `;
+                counterEl.classList.remove('updating');
+                prevYears = 0;
+                prevTotalMonths = 0;
+                return;
+            }
+
+            const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = calculateAge(birthDate, now);
+
+            if (years > prevYears) {
+                triggerStarCelebration();
+            }
+            if (prevTotalMonths !== -1 && totalMonths > prevTotalMonths) {
+                triggerMoonCelebration();
+            }
+
+            prevYears = years;
+            prevTotalMonths = totalMonths;
+
+            // Основной счётчик
+            let lines = [];
+            if (years > 0) {
+                lines.push(`${years} ${pluralize(years, 'год', 'года', 'лет')}`);
+            }
+            lines.push(`${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')}`);
+            lines.push(`${days} ${pluralize(days, 'день', 'дня', 'дней')}`);
+            lines.push(`${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
+            lines.push(`${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
+            lines.push(`${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
+
+            // Отступ: 3 пустые строки
+            lines.push('&nbsp;');
+            lines.push('&nbsp;');
+            lines.push('&nbsp;');
+
+            // Дополнительный счётчик: недели + дни
+            if (totalDaysSinceBirth >= 7) {
+                const weeks = Math.floor(totalDaysSinceBirth / 7);
+                const extraDays = totalDaysSinceBirth % 7;
+                let weeksStr = `${weeks} ${pluralize(weeks, 'неделя', 'недели', 'недель')}`;
+                if (extraDays > 0) {
+                    weeksStr += ` и ${extraDays} ${pluralize(extraDays, 'день', 'дня', 'дней')}`;
+                }
+                lines.push(weeksStr);
+            }
+
+            counterEl.innerHTML = lines.map(t => `<div>${t}</div>`).join('');
+            counterEl.classList.remove('updating');
+        }, 150);
+    }
+
+    updateCounter();
+    setInterval(updateCounter, 1000);
+</script>
+</body>
+</html>
