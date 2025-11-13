@@ -133,6 +133,41 @@
     const birthDate = new Date('2025-09-21T19:20:00');
     let prevYears = 0;
     let prevTotalMonths = -1;
+    let notificationsEnabled = false;
+    let lastNotificationCheck = 0;
+
+    // Запрос разрешения на уведомления
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                notificationsEnabled = (permission === 'granted');
+                console.log('Уведомления разрешены:', notificationsEnabled);
+            });
+        }
+    }
+
+    function showNotification(title, body) {
+        if (notificationsEnabled && 'Notification' in window) {
+            try {
+                new Notification(title, {
+                    body: body,
+                    icon: 'icon.png',
+                    badge: 'icon.png'
+                });
+            } catch (e) {
+                console.warn('Не удалось показать уведомление:', e);
+            }
+        }
+    }
+
+    function getLastChecked() {
+        const saved = localStorage.getItem('lastChecked');
+        return saved ? new Date(saved) : null;
+    }
+
+    function setLastChecked(date) {
+        localStorage.setItem('lastChecked', date.toISOString());
+    }
 
     function pluralize(number, one, few, many) {
         let n = Math.abs(number) % 100;
@@ -151,10 +186,8 @@
         let years = 0;
         let months = 0;
         let days = 0;
-
         let current = new Date(birth);
 
-        // Полные года
         while (true) {
             let candidate = new Date(current);
             candidate.setFullYear(candidate.getFullYear() + 1);
@@ -167,7 +200,6 @@
             }
         }
 
-        // Полные месяцы
         while (true) {
             let nextMonth = current.getMonth() + 1;
             let nextYear = current.getFullYear();
@@ -186,18 +218,13 @@
             }
         }
 
-        // Остаток — дни
         let diffTime = now - current;
         if (diffTime < 0) diffTime = 0;
         days = Math.floor(diffTime / (24 * 60 * 60 * 1000));
-
-        // Точное время остатка
         let remainingMs = diffTime - days * 24 * 60 * 60 * 1000;
         let hours = Math.floor(remainingMs / (60 * 60 * 1000));
         let minutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
         let seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
-
-        // Общее количество дней с момента рождения
         const totalDaysSinceBirth = Math.floor((now - birth) / (24 * 60 * 60 * 1000));
 
         return { years, months, days, hours, minutes, seconds, totalMonths: years * 12 + months, totalDaysSinceBirth };
@@ -228,6 +255,47 @@
         moon.style.transform = 'translateX(-50%)';
         document.body.appendChild(moon);
         setTimeout(() => moon.remove(), 3100);
+    }
+
+    // Отдельная функция для проверки уведомлений
+    function checkNotificationsIfNeeded() {
+        const now = Date.now();
+        if (now - lastNotificationCheck < 60000) return; // реже чем раз в минуту
+        lastNotificationCheck = now;
+
+        const today = new Date();
+        const lastChecked = getLastChecked();
+        if (lastChecked &&
+            lastChecked.getFullYear() === today.getFullYear() &&
+            lastChecked.getMonth() === today.getMonth() &&
+            lastChecked.getDate() === today.getDate()) {
+            return;
+        }
+
+        const age = calculateAge(birthDate, today);
+        const { years, totalMonths } = age;
+
+        let notified = false;
+
+        // Проверка года: день рождения
+        if (years > 0 && today.getDate() === birthDate.getDate() && today.getMonth() === birthDate.getMonth()) {
+            showNotification('🎉 Сыну исполнилось!', `${years} ${pluralize(years, 'год', 'года', 'лет')}!`);
+            notified = true;
+        }
+
+        // Проверка месяца: то же число
+        if (totalMonths > 0 && today.getDate() === birthDate.getDate()) {
+            // Исключение: если день рождения 31, а сегодня 30 — не показываем
+            const daysInCurrentMonth = getDaysInMonth(today.getFullYear(), today.getMonth());
+            if (birthDate.getDate() <= daysInCurrentMonth) {
+                showNotification('🌙 Сыну исполнился!', `${totalMonths} ${pluralize(totalMonths, 'месяц', 'месяца', 'месяцев')}!`);
+                notified = true;
+            }
+        }
+
+        if (notified) {
+            setLastChecked(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+        }
     }
 
     function updateCounter() {
@@ -266,7 +334,9 @@
             prevYears = years;
             prevTotalMonths = totalMonths;
 
-            // Основной счётчик
+            // Проверяем уведомления (но не чаще раза в минуту)
+            checkNotificationsIfNeeded();
+
             let lines = [];
             if (years > 0) {
                 lines.push(`${years} ${pluralize(years, 'год', 'года', 'лет')}`);
@@ -276,13 +346,9 @@
             lines.push(`${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
             lines.push(`${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
             lines.push(`${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
-
-            // Отступ: 3 пустые строки
             lines.push('&nbsp;');
             lines.push('&nbsp;');
             lines.push('&nbsp;');
-
-            // Дополнительный счётчик: недели + дни
             if (totalDaysSinceBirth >= 7) {
                 const weeks = Math.floor(totalDaysSinceBirth / 7);
                 const extraDays = totalDaysSinceBirth % 7;
@@ -298,8 +364,10 @@
         }, 150);
     }
 
+    // Инициализация
+    requestNotificationPermission();
     updateCounter();
-    setInterval(updateCounter, 1000);
+    setInterval(updateCounter, 1000); // ← СЕКУНДНЫЙ СЧЁТЧИК ВОССТАНОВЛЕН!
 </script>
 </body>
 </html>
