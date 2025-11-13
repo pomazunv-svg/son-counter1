@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Сыну</title>
-    <!-- Иконка для ярлыка на iPhone -->
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <style>
@@ -116,7 +115,6 @@
             100% { transform: translateY(0); opacity: 0; }
         }
 
-        /* Кнопка "Заметки" */
         .nav-button {
             position: absolute;
             bottom: 20px;
@@ -141,31 +139,6 @@
             transform: translateX(-50%) scale(1.03);
         }
 
-        /* Кнопка "Тест уведомления" */
-        .test-notification-btn {
-            position: absolute;
-            bottom: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 100, 100, 0.2);
-            color: white;
-            border: 1px solid #ff6464;
-            border-radius: 30px;
-            padding: 8px 20px;
-            font-family: 'Smeshariki Covers', sans-serif;
-            font-size: 1.1rem;
-            text-decoration: none;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
-            z-index: 9;
-        }
-        .test-notification-btn:hover {
-            background: rgba(255, 100, 100, 0.3);
-            transform: translateX(-50%) scale(1.02);
-        }
-
         @media (max-width: 390px) {
             h1 { font-size: 2.4rem; }
             .counter { font-size: 1.5rem; }
@@ -173,13 +146,12 @@
     </style>
 </head>
 <body>
-    <h1>Сыну</h1>
+    <h1>Нашему сыночку</h1>
     <div class="counter" id="counter">
         Загрузка<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
     </div>
 
-    <a href="notes.html" class="nav-button">Заметки</a>
-    <button class="test-notification-btn" onclick="testNotification()">Тест уведомления</button>
+    <a href="facts.html" class="nav-button">Интересные факты сегодня</a>
 
     <script>
         const birthDate = new Date('2025-09-21T19:20:00');
@@ -207,24 +179,6 @@
                 } catch (e) {
                     console.warn('Ошибка уведомления:', e);
                 }
-            }
-        }
-
-        function testNotification() {
-            if (!('Notification' in window)) {
-                alert('Уведомления не поддерживаются');
-                return;
-            }
-            if (Notification.permission !== 'granted') {
-                alert('Разрешите уведомления при запросе');
-                requestNotificationPermission();
-                setTimeout(() => {
-                    if (Notification.permission === 'granted') {
-                        showNotification('✅ Тест', 'Уведомления работают!');
-                    }
-                }, 1000);
-            } else {
-                showNotification('✅ Тест', 'Уведомления работают!');
             }
         }
 
