@@ -6,9 +6,10 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>Сын</title>
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+    <title>Сыну</title>
+    <!-- Иконка для ярлыка на iPhone -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <style>
         @font-face {
             font-family: 'Smeshariki Covers';
@@ -87,7 +88,6 @@
             60%, 100% { opacity: 1; }
         }
 
-        /* Анимация: звёздочки при году */
         .celebration-star {
             position: absolute;
             font-size: 1.6rem;
@@ -102,7 +102,6 @@
             100% { transform: translateY(-100px) rotate(30deg); opacity: 0; }
         }
 
-        /* Анимация: луна при новом месяце */
         .celebration-moon {
             position: absolute;
             font-size: 2rem;
@@ -117,6 +116,56 @@
             100% { transform: translateY(0); opacity: 0; }
         }
 
+        /* Кнопка "Заметки" */
+        .nav-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(110, 193, 228, 0.2);
+            color: white;
+            border: 1px solid #6ec1e4;
+            border-radius: 30px;
+            padding: 10px 24px;
+            font-family: 'Smeshariki Covers', sans-serif;
+            font-size: 1.2rem;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            z-index: 9;
+        }
+        .nav-button:hover {
+            background: rgba(110, 193, 228, 0.3);
+            transform: translateX(-50%) scale(1.03);
+        }
+
+        /* Кнопка "Тест уведомления" */
+        .test-notification-btn {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 100, 100, 0.2);
+            color: white;
+            border: 1px solid #ff6464;
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-family: 'Smeshariki Covers', sans-serif;
+            font-size: 1.1rem;
+            text-decoration: none;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            z-index: 9;
+        }
+        .test-notification-btn:hover {
+            background: rgba(255, 100, 100, 0.3);
+            transform: translateX(-50%) scale(1.02);
+        }
+
         @media (max-width: 390px) {
             h1 { font-size: 2.4rem; }
             .counter { font-size: 1.5rem; }
@@ -124,250 +173,263 @@
     </style>
 </head>
 <body>
-    <h1>Нашему сыночку</h1>
+    <h1>Сыну</h1>
     <div class="counter" id="counter">
         Загрузка<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
     </div>
 
-<script>
-    const birthDate = new Date('2025-09-21T19:20:00');
-    let prevYears = 0;
-    let prevTotalMonths = -1;
-    let notificationsEnabled = false;
-    let lastNotificationCheck = 0;
+    <a href="notes.html" class="nav-button">Заметки</a>
+    <button class="test-notification-btn" onclick="testNotification()">Тест уведомления</button>
 
-    // Запрос разрешения на уведомления
-    function requestNotificationPermission() {
-        if ('Notification' in window) {
-            Notification.requestPermission().then(permission => {
-                notificationsEnabled = (permission === 'granted');
-                console.log('Уведомления разрешены:', notificationsEnabled);
-            });
-        }
-    }
+    <script>
+        const birthDate = new Date('2025-09-21T19:20:00');
+        let prevYears = 0;
+        let prevTotalMonths = -1;
+        let notificationsEnabled = false;
+        let lastNotificationCheck = 0;
 
-    function showNotification(title, body) {
-        if (notificationsEnabled && 'Notification' in window) {
-            try {
-                new Notification(title, {
-                    body: body,
-                    icon: 'icon.png',
-                    badge: 'icon.png'
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    notificationsEnabled = (permission === 'granted');
                 });
-            } catch (e) {
-                console.warn('Не удалось показать уведомление:', e);
             }
         }
-    }
 
-    function getLastChecked() {
-        const saved = localStorage.getItem('lastChecked');
-        return saved ? new Date(saved) : null;
-    }
+        function showNotification(title, body) {
+            if (notificationsEnabled && 'Notification' in window) {
+                try {
+                    new Notification(title, {
+                        body: body,
+                        icon: 'icon.png',
+                        badge: 'icon.png'
+                    });
+                } catch (e) {
+                    console.warn('Ошибка уведомления:', e);
+                }
+            }
+        }
 
-    function setLastChecked(date) {
-        localStorage.setItem('lastChecked', date.toISOString());
-    }
-
-    function pluralize(number, one, few, many) {
-        let n = Math.abs(number) % 100;
-        let n1 = n % 10;
-        if (n > 10 && n < 20) return many;
-        if (n1 > 1 && n1 < 5) return few;
-        if (n1 === 1) return one;
-        return many;
-    }
-
-    function getDaysInMonth(year, month) {
-        return new Date(year, month + 1, 0).getDate();
-    }
-
-    function calculateAge(birth, now) {
-        let years = 0;
-        let months = 0;
-        let days = 0;
-        let current = new Date(birth);
-
-        while (true) {
-            let candidate = new Date(current);
-            candidate.setFullYear(candidate.getFullYear() + 1);
-            candidate.setHours(birth.getHours(), birth.getMinutes(), birth.getSeconds(), 0);
-            if (candidate <= now) {
-                current = candidate;
-                years++;
+        function testNotification() {
+            if (!('Notification' in window)) {
+                alert('Уведомления не поддерживаются');
+                return;
+            }
+            if (Notification.permission !== 'granted') {
+                alert('Разрешите уведомления при запросе');
+                requestNotificationPermission();
+                setTimeout(() => {
+                    if (Notification.permission === 'granted') {
+                        showNotification('✅ Тест', 'Уведомления работают!');
+                    }
+                }, 1000);
             } else {
-                break;
+                showNotification('✅ Тест', 'Уведомления работают!');
             }
         }
 
-        while (true) {
-            let nextMonth = current.getMonth() + 1;
-            let nextYear = current.getFullYear();
-            if (nextMonth > 11) {
-                nextMonth = 0;
-                nextYear++;
+        function getLastChecked() {
+            const saved = localStorage.getItem('lastChecked');
+            return saved ? new Date(saved) : null;
+        }
+
+        function setLastChecked(date) {
+            localStorage.setItem('lastChecked', date.toISOString());
+        }
+
+        function pluralize(number, one, few, many) {
+            let n = Math.abs(number) % 100;
+            let n1 = n % 10;
+            if (n > 10 && n < 20) return many;
+            if (n1 > 1 && n1 < 5) return few;
+            if (n1 === 1) return one;
+            return many;
+        }
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        function calculateAge(birth, now) {
+            let years = 0;
+            let months = 0;
+            let days = 0;
+            let current = new Date(birth);
+
+            while (true) {
+                let candidate = new Date(current);
+                candidate.setFullYear(candidate.getFullYear() + 1);
+                candidate.setHours(birth.getHours(), birth.getMinutes(), birth.getSeconds(), 0);
+                if (candidate <= now) {
+                    current = candidate;
+                    years++;
+                } else {
+                    break;
+                }
             }
-            let daysInNext = getDaysInMonth(nextYear, nextMonth);
-            let dayToSet = Math.min(current.getDate(), daysInNext);
-            let candidate = new Date(nextYear, nextMonth, dayToSet, birth.getHours(), birth.getMinutes(), birth.getSeconds());
-            if (candidate <= now) {
-                current = candidate;
-                months++;
-            } else {
-                break;
+
+            while (true) {
+                let nextMonth = current.getMonth() + 1;
+                let nextYear = current.getFullYear();
+                if (nextMonth > 11) {
+                    nextMonth = 0;
+                    nextYear++;
+                }
+                let daysInNext = getDaysInMonth(nextYear, nextMonth);
+                let dayToSet = Math.min(current.getDate(), daysInNext);
+                let candidate = new Date(nextYear, nextMonth, dayToSet, birth.getHours(), birth.getMinutes(), birth.getSeconds());
+                if (candidate <= now) {
+                    current = candidate;
+                    months++;
+                } else {
+                    break;
+                }
             }
+
+            let diffTime = now - current;
+            if (diffTime < 0) diffTime = 0;
+            days = Math.floor(diffTime / (24 * 60 * 60 * 1000));
+            let remainingMs = diffTime - days * 24 * 60 * 60 * 1000;
+            let hours = Math.floor(remainingMs / (60 * 60 * 1000));
+            let minutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+            let seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
+            const totalDaysSinceBirth = Math.floor((now - birth) / (24 * 60 * 60 * 1000));
+
+            return { years, months, days, hours, minutes, seconds, totalMonths: years * 12 + months, totalDaysSinceBirth };
         }
 
-        let diffTime = now - current;
-        if (diffTime < 0) diffTime = 0;
-        days = Math.floor(diffTime / (24 * 60 * 60 * 1000));
-        let remainingMs = diffTime - days * 24 * 60 * 60 * 1000;
-        let hours = Math.floor(remainingMs / (60 * 60 * 1000));
-        let minutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
-        let seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
-        const totalDaysSinceBirth = Math.floor((now - birth) / (24 * 60 * 60 * 1000));
-
-        return { years, months, days, hours, minutes, seconds, totalMonths: years * 12 + months, totalDaysSinceBirth };
-    }
-
-    function triggerStarCelebration() {
-        const stars = ['✨', '🌟', '💫'];
-        for (let i = 0; i < 3; i++) {
-            const star = document.createElement('div');
-            star.className = 'celebration-star';
-            star.textContent = stars[Math.floor(Math.random() * stars.length)];
-            star.style.left = `${20 + Math.random() * 60}%`;
-            star.style.top = '40%';
-            star.style.animationDelay = `${i * 0.2}s`;
-            document.body.appendChild(star);
-            setTimeout(() => star.remove(), 3000);
-        }
-        if (window.navigator.vibrate) {
-            navigator.vibrate([100, 50, 100]);
-        }
-    }
-
-    function triggerMoonCelebration() {
-        const moon = document.createElement('div');
-        moon.className = 'celebration-moon';
-        moon.textContent = '🌙';
-        moon.style.left = '50%';
-        moon.style.transform = 'translateX(-50%)';
-        document.body.appendChild(moon);
-        setTimeout(() => moon.remove(), 3100);
-    }
-
-    // Отдельная функция для проверки уведомлений
-    function checkNotificationsIfNeeded() {
-        const now = Date.now();
-        if (now - lastNotificationCheck < 60000) return; // реже чем раз в минуту
-        lastNotificationCheck = now;
-
-        const today = new Date();
-        const lastChecked = getLastChecked();
-        if (lastChecked &&
-            lastChecked.getFullYear() === today.getFullYear() &&
-            lastChecked.getMonth() === today.getMonth() &&
-            lastChecked.getDate() === today.getDate()) {
-            return;
-        }
-
-        const age = calculateAge(birthDate, today);
-        const { years, totalMonths } = age;
-
-        let notified = false;
-
-        // Проверка года: день рождения
-        if (years > 0 && today.getDate() === birthDate.getDate() && today.getMonth() === birthDate.getMonth()) {
-            showNotification('🎉 Сыну исполнилось!', `${years} ${pluralize(years, 'год', 'года', 'лет')}!`);
-            notified = true;
-        }
-
-        // Проверка месяца: то же число
-        if (totalMonths > 0 && today.getDate() === birthDate.getDate()) {
-            // Исключение: если день рождения 31, а сегодня 30 — не показываем
-            const daysInCurrentMonth = getDaysInMonth(today.getFullYear(), today.getMonth());
-            if (birthDate.getDate() <= daysInCurrentMonth) {
-                showNotification('🌙 Сыну исполнился!', `${totalMonths} ${pluralize(totalMonths, 'месяц', 'месяца', 'месяцев')}!`);
-                notified = true;
+        function triggerStarCelebration() {
+            const stars = ['✨', '🌟', '💫'];
+            for (let i = 0; i < 3; i++) {
+                const star = document.createElement('div');
+                star.className = 'celebration-star';
+                star.textContent = stars[Math.floor(Math.random() * stars.length)];
+                star.style.left = `${20 + Math.random() * 60}%`;
+                star.style.top = '40%';
+                star.style.animationDelay = `${i * 0.2}s`;
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 3000);
+            }
+            if (window.navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
             }
         }
 
-        if (notified) {
-            setLastChecked(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+        function triggerMoonCelebration() {
+            const moon = document.createElement('div');
+            moon.className = 'celebration-moon';
+            moon.textContent = '🌙';
+            moon.style.left = '50%';
+            moon.style.transform = 'translateX(-50%)';
+            document.body.appendChild(moon);
+            setTimeout(() => moon.remove(), 3100);
         }
-    }
 
-    function updateCounter() {
-        const now = new Date();
-        const diffMs = now - birthDate;
-        const counterEl = document.getElementById('counter');
-        counterEl.classList.add('updating');
+        function checkNotificationsIfNeeded() {
+            const now = Date.now();
+            if (now - lastNotificationCheck < 60000) return;
+            lastNotificationCheck = now;
 
-        setTimeout(() => {
-            if (diffMs <= 0) {
-                counterEl.innerHTML = `
-                    <div>0 ${pluralize(0, 'месяц', 'месяца', 'месяцев')}</div>
-                    <div>0 ${pluralize(0, 'день', 'дня', 'дней')}</div>
-                    <div>0 ${pluralize(0, 'час', 'часа', 'часов')}</div>
-                    <div>0 ${pluralize(0, 'минута', 'минуты', 'минут')}</div>
-                    <div>0 ${pluralize(0, 'секунда', 'секунды', 'секунд')}</div>
-                    <div>&nbsp;</div>
-                    <div>&nbsp;</div>
-                    <div>&nbsp;</div>
-                `;
-                counterEl.classList.remove('updating');
-                prevYears = 0;
-                prevTotalMonths = 0;
+            const today = new Date();
+            const lastChecked = getLastChecked();
+            if (lastChecked &&
+                lastChecked.getFullYear() === today.getFullYear() &&
+                lastChecked.getMonth() === today.getMonth() &&
+                lastChecked.getDate() === today.getDate()) {
                 return;
             }
 
-            const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = calculateAge(birthDate, now);
+            const age = calculateAge(birthDate, today);
+            const { years, totalMonths } = age;
 
-            if (years > prevYears) {
-                triggerStarCelebration();
+            let notified = false;
+
+            if (years > 0 && today.getDate() === birthDate.getDate() && today.getMonth() === birthDate.getMonth()) {
+                showNotification('🎉 Сыну исполнилось!', `${years} ${pluralize(years, 'год', 'года', 'лет')}!`);
+                notified = true;
             }
-            if (prevTotalMonths !== -1 && totalMonths > prevTotalMonths) {
-                triggerMoonCelebration();
-            }
 
-            prevYears = years;
-            prevTotalMonths = totalMonths;
-
-            // Проверяем уведомления (но не чаще раза в минуту)
-            checkNotificationsIfNeeded();
-
-            let lines = [];
-            if (years > 0) {
-                lines.push(`${years} ${pluralize(years, 'год', 'года', 'лет')}`);
-            }
-            lines.push(`${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')}`);
-            lines.push(`${days} ${pluralize(days, 'день', 'дня', 'дней')}`);
-            lines.push(`${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
-            lines.push(`${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
-            lines.push(`${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
-            lines.push('&nbsp;');
-            lines.push('&nbsp;');
-            lines.push('&nbsp;');
-            if (totalDaysSinceBirth >= 7) {
-                const weeks = Math.floor(totalDaysSinceBirth / 7);
-                const extraDays = totalDaysSinceBirth % 7;
-                let weeksStr = `${weeks} ${pluralize(weeks, 'неделя', 'недели', 'недель')}`;
-                if (extraDays > 0) {
-                    weeksStr += ` и ${extraDays} ${pluralize(extraDays, 'день', 'дня', 'дней')}`;
+            if (totalMonths > 0 && today.getDate() === birthDate.getDate()) {
+                const daysInCurrentMonth = getDaysInMonth(today.getFullYear(), today.getMonth());
+                if (birthDate.getDate() <= daysInCurrentMonth) {
+                    showNotification('🌙 Сыну исполнился!', `${totalMonths} ${pluralize(totalMonths, 'месяц', 'месяца', 'месяцев')}!`);
+                    notified = true;
                 }
-                lines.push(weeksStr);
             }
 
-            counterEl.innerHTML = lines.map(t => `<div>${t}</div>`).join('');
-            counterEl.classList.remove('updating');
-        }, 150);
-    }
+            if (notified) {
+                setLastChecked(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+            }
+        }
 
-    // Инициализация
-    requestNotificationPermission();
-    updateCounter();
-    setInterval(updateCounter, 1000); // ← СЕКУНДНЫЙ СЧЁТЧИК ВОССТАНОВЛЕН!
-</script>
+        function updateCounter() {
+            const now = new Date();
+            const diffMs = now - birthDate;
+            const counterEl = document.getElementById('counter');
+            counterEl.classList.add('updating');
+
+            setTimeout(() => {
+                if (diffMs <= 0) {
+                    counterEl.innerHTML = `
+                        <div>0 ${pluralize(0, 'месяц', 'месяца', 'месяцев')}</div>
+                        <div>0 ${pluralize(0, 'день', 'дня', 'дней')}</div>
+                        <div>0 ${pluralize(0, 'час', 'часа', 'часов')}</div>
+                        <div>0 ${pluralize(0, 'минута', 'минуты', 'минут')}</div>
+                        <div>0 ${pluralize(0, 'секунда', 'секунды', 'секунд')}</div>
+                        <div>&nbsp;</div>
+                        <div>&nbsp;</div>
+                        <div>&nbsp;</div>
+                    `;
+                    counterEl.classList.remove('updating');
+                    prevYears = 0;
+                    prevTotalMonths = 0;
+                    return;
+                }
+
+                const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = calculateAge(birthDate, now);
+
+                if (years > prevYears) {
+                    triggerStarCelebration();
+                }
+                if (prevTotalMonths !== -1 && totalMonths > prevTotalMonths) {
+                    triggerMoonCelebration();
+                }
+
+                prevYears = years;
+                prevTotalMonths = totalMonths;
+
+                checkNotificationsIfNeeded();
+
+                let lines = [];
+                if (years > 0) {
+                    lines.push(`${years} ${pluralize(years, 'год', 'года', 'лет')}`);
+                }
+                lines.push(`${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')}`);
+                lines.push(`${days} ${pluralize(days, 'день', 'дня', 'дней')}`);
+                lines.push(`${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
+                lines.push(`${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
+                lines.push(`${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
+                lines.push('&nbsp;');
+                lines.push('&nbsp;');
+                lines.push('&nbsp;');
+                if (totalDaysSinceBirth >= 7) {
+                    const weeks = Math.floor(totalDaysSinceBirth / 7);
+                    const extraDays = totalDaysSinceBirth % 7;
+                    let weeksStr = `${weeks} ${pluralize(weeks, 'неделя', 'недели', 'недель')}`;
+                    if (extraDays > 0) {
+                        weeksStr += ` и ${extraDays} ${pluralize(extraDays, 'день', 'дня', 'дней')}`;
+                    }
+                    lines.push(weeksStr);
+                }
+
+                counterEl.innerHTML = lines.map(t => `<div>${t}</div>`).join('');
+                counterEl.classList.remove('updating');
+            }, 150);
+        }
+
+        requestNotificationPermission();
+        updateCounter();
+        setInterval(updateCounter, 1000);
+    </script>
 </body>
 </html>
