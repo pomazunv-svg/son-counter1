@@ -9,120 +9,176 @@
     <title>Интересные факты</title>
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
-<style>
-    @font-face {
-        font-family: 'Smeshariki Covers';
-        src: url('SmesharikiCoversRegular.ttf') format('truetype');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-    }
+    <style>
+        @font-face {
+            font-family: 'Smeshariki Covers';
+            src: url('SmesharikiCoversRegular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: #000 url('bg.jpg') center/cover no-repeat fixed;
-        color: #fff;
-        height: 100vh;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        padding: env(safe-area-inset-top) env(safe-area-inset-right)
-                 env(safe-area-inset-bottom) env(safe-area-inset-left);
-        overflow: hidden;
-        position: relative;
-    }
+        body {
+            font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000 url('bg.jpg') center/cover no-repeat fixed;
+            color: #fff;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overflow: hidden;
+            position: relative;
+        }
 
-    a.back {
-        position: absolute;
-        top: 30px;
-        left: 20px;
-        color: white;
-        text-decoration: none;
-        font-size: 1.4rem;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
-        z-index: 10;
-    }
+        a.back {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
 
-    .content {
-        padding: 0 20px;
-        max-width: 90%;
-    }
+        .content {
+            padding: 0 20px;
+            max-width: 90%;
+        }
 
-    .fact-card {
-        background: rgba(0, 15, 30, 0.7); /* тёмно-синий полупрозрачный */
-        border-radius: 20px;
-        padding: 25px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(110, 193, 228, 0.3);
-    }
+        .fact-card {
+            background: rgba(0, 15, 30, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(110, 193, 228, 0.3);
+        }
 
-    h1 {
-        font-size: 2.4rem;
-        margin-bottom: 1.5rem;
-        letter-spacing: -0.5px;
-        /* Белый текст с чёткой тенью */
-        color: white;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-    }
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+            color: white;
+            text-shadow: 
+                0 1px 0 #000,
+                0 2px 0 #000,
+                0 3px 0 #000,
+                0 4px 0 #000,
+                0 5px 0 #000,
+                0 6px 0 #000,
+                0 7px 0 #000,
+                0 8px 0 #000,
+                0 9px 0 #000,
+                0 10px 0 #000,
+                0 11px 0 #000,
+                0 12px 0 #000,
+                0 13px 0 #000,
+                0 14px 0 #000,
+                0 15px 0 #000,
+                0 16px 0 #000,
+                0 17px 0 #000,
+                0 18px 0 #000,
+                0 19px 0 #000,
+                0 20px 0 #000,
+                0 21px 0 #000,
+                0 22px 0 #000,
+                0 23px 0 #000,
+                0 24px 0 #000,
+                0 25px 0 #000,
+                0 26px 0 #000,
+                0 27px 0 #000,
+                0 28px 0 #000,
+                0 29px 0 #000,
+                0 30px 0 #000,
+                0 31px 0 #000,
+                0 32px 0 #000,
+                0 33px 0 #000,
+                0 34px 0 #000,
+                0 35px 0 #000,
+                0 36px 0 #000,
+                0 37px 0 #000,
+                0 38px 0 #000,
+                0 39px 0 #000,
+                0 40px 0 #000,
+                0 41px 0 #000,
+                0 42px 0 #000,
+                0 43px 0 #000,
+                0 44px 0 #000,
+                0 45px 0 #000,
+                0 46px 0 #000,
+                0 47px 0 #000,
+                0 48px 0 #000,
+                0 49px 0 #000,
+                0 50px 0 #000;
+        }
 
-    .fact-text {
-        font-size: 1.65rem;
-        line-height: 1.7;
-        margin-bottom: 1rem;
-        color: white;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
-    }
+        .fact-text {
+            font-size: 1.65rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+        }
 
-    .day-info {
-        font-size: 1.3rem;
-        opacity: 0.95;
-        color: white;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
-    }
+        .day-info {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+        }
 
-    @media (max-width: 390px) {
-        h1 { font-size: 2.1rem; }
-        .fact-text { font-size: 1.5rem; }
-        .day-info { font-size: 1.2rem; }
-    }
-</style>
+        @media (max-width: 390px) {
+            h1 { font-size: 2.1rem; }
+            .fact-text { font-size: 1.5rem; }
+            .day-info { font-size: 1.2rem; }
+        }
+    </style>
 </head>
 <body>
     <a href="index.html" class="back">← Назад</a>
 
-<div class="content">
-    <div class="fact-card">
-        <h1>Интересный факт</h1>
-        <div class="fact-text" id="fact">Загрузка...</div>
-        <div class="day-info" id="dayInfo">День №...</div>
+    <div class="content">
+        <div class="fact-card">
+            <h1>Интересный факт</h1>
+            <div class="fact-text" id="fact">Загрузка...</div>
+            <div class="day-info" id="dayInfo">День №...</div>
+        </div>
     </div>
-</div>
 
-<script src="facts-full.js"></script>
-<script>
-    const birthDate = new Date('2025-09-21T19:20:00');
-    const now = new Date();
-    const daysOld = Math.floor((now - birthDate) / (24 * 60 * 60 * 1000)) + 1;
+    <script src="facts-full.js"></script>
+    <script>
+        // Дата рождения (без времени — только дата)
+        const birthDate = new Date('2025-09-21');
 
-    if (typeof facts !== 'undefined' && facts.length > 0) {
-        const factIndex = (daysOld - 1) % facts.length;
-        const fact = facts[factIndex];
-        document.getElementById('fact').textContent = fact;
-        document.getElementById('dayInfo').textContent = `День №${daysOld}`;
-    } else {
-        document.getElementById('fact').textContent = "Факты не загружены.";
-    }
-</script>
+        // Сегодняшняя дата (в 00:00 текущего дня)
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        // Разница в миллисекундах
+        const diffTime = today - birthDate;
+        const daysOld = Math.floor(diffTime / (24 * 60 * 60 * 1000)) + 1; // +1, чтобы день рождения = день 1
+
+        if (typeof facts !== 'undefined' && facts.length > 0) {
+            const factIndex = (daysOld - 1) % facts.length;
+            const fact = facts[factIndex];
+            document.getElementById('fact').textContent = fact;
+            document.getElementById('dayInfo').textContent = `День №${daysOld}`;
+        } else {
+            document.getElementById('fact').textContent = "Факты не загружены.";
+        }
+    </script>
 </body>
 </html>
