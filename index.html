@@ -317,69 +317,74 @@
         }
 
         function updateCounter() {
-            const now = new Date();
-            const diffMs = now - birthDate;
-            const counterEl = document.getElementById('counter');
-            counterEl.classList.add('updating');
+    const now = new Date();
+    const diffMs = now - birthDate;
+    const counterEl = document.getElementById('counter');
+    counterEl.classList.add('updating');
 
-            setTimeout(() => {
-                if (diffMs <= 0) {
-                    counterEl.innerHTML = `
-                        <div>0 ${pluralize(0, 'месяц', 'месяца', 'месяцев')}</div>
-                        <div>0 ${pluralize(0, 'день', 'дня', 'дней')}</div>
-                        <div>0 ${pluralize(0, 'час', 'часа', 'часов')}</div>
-                        <div>0 ${pluralize(0, 'минута', 'минуты', 'минут')}</div>
-                        <div>0 ${pluralize(0, 'секунда', 'секунды', 'секунд')}</div>
-                        <div>&nbsp;</div>
-                        <div>&nbsp;</div>
-                        <div>&nbsp;</div>
-                    `;
-                    counterEl.classList.remove('updating');
-                    prevYears = 0;
-                    prevTotalMonths = 0;
-                    return;
-                }
-
-                const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = calculateAge(birthDate, now);
-
-                if (years > prevYears) {
-                    triggerStarCelebration();
-                }
-                if (prevTotalMonths !== -1 && totalMonths > prevTotalMonths) {
-                    triggerMoonCelebration();
-                }
-
-                prevYears = years;
-                prevTotalMonths = totalMonths;
-
-                checkNotificationsIfNeeded();
-
-                let lines = [];
-                if (years > 0) {
-                    lines.push(`${years} ${pluralize(years, 'год', 'года', 'лет')}`);
-                }
-                lines.push(`${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')}`);
-                lines.push(`${days} ${pluralize(days, 'день', 'дня', 'дней')}`);
-                lines.push(`${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
-                lines.push(`${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
-                lines.push(`${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
-                lines.push('&nbsp;');
-                lines.push('&nbsp;');
-                lines.push('&nbsp;');
-                if (totalDaysSinceBirth >= 7) {
-                    const weeks = Math.floor(totalDaysSinceBirth / 7);
-                    const extraDays = totalDaysSinceBirth % 7;
-                    let weeksStr = `${weeks} ${pluralize(weeks, 'неделя', 'недели', 'недель')}`;
-                    if (extraDays > 0) {
-                        weeksStr += ` и ${extraDays} ${pluralize(extraDays, 'день', 'дня', 'дней')}`;
-                    }
-                    lines.push(weeksStr);
-                }
-
-                counterEl.innerHTML = lines.map(t => `<div>${t}</div>`).join('');
-                counterEl.classList.remove('updating');
-            }, 150);
+    setTimeout(() => {
+        if (diffMs <= 0) {
+            counterEl.innerHTML = `
+                <div>0 ${pluralize(0, 'месяц', 'месяца', 'месяцев')}</div>
+                <div>0 ${pluralize(0, 'день', 'дня', 'дней')}</div>
+                <div>0 ${pluralize(0, 'час', 'часа', 'часов')}</div>
+                <div>0 ${pluralize(0, 'минута', 'минуты', 'минут')}</div>
+                <div>0 ${pluralize(0, 'секунда', 'секунды', 'секунд')}</div>
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+                <div><a href="facts.html" class="fact-button">Интересные факты сегодня</a></div>
+            `;
+            counterEl.classList.remove('updating');
+            prevYears = 0;
+            prevTotalMonths = 0;
+            return;
         }
+
+        const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = calculateAge(birthDate, now);
+
+        if (years > prevYears) {
+            triggerStarCelebration();
+        }
+        if (prevTotalMonths !== -1 && totalMonths > prevTotalMonths) {
+            triggerMoonCelebration();
+        }
+
+        prevYears = years;
+        prevTotalMonths = totalMonths;
+
+        checkNotificationsIfNeeded();
+
+        let lines = [];
+        if (years > 0) {
+            lines.push(`${years} ${pluralize(years, 'год', 'года', 'лет')}`);
+        }
+        lines.push(`${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')}`);
+        lines.push(`${days} ${pluralize(days, 'день', 'дня', 'дней')}`);
+        lines.push(`${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
+        lines.push(`${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
+        lines.push(`${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
+        lines.push('&nbsp;'); // пустая строка
+
+        // Недели
+        if (totalDaysSinceBirth >= 7) {
+            const weeks = Math.floor(totalDaysSinceBirth / 7);
+            const extraDays = totalDaysSinceBirth % 7;
+            let weeksStr = `${weeks} ${pluralize(weeks, 'неделя', 'недели', 'недель')}`;
+            if (extraDays > 0) {
+                weeksStr += ` и ${extraDays} ${pluralize(extraDays, 'день', 'дня', 'дней')}`;
+            }
+            lines.push(weeksStr);
+        } else {
+            lines.push('&nbsp;'); // если нет недель — оставляем пустую строку
+        }
+
+        lines.push('&nbsp;'); // вторая пустая строка
+        lines.push('<a href="facts.html" class="fact-button">Интересные факты сегодня</a>');
+
+        counterEl.innerHTML = lines.map(t => `<div>${t}</div>`).join('');
+        counterEl.classList.remove('updating');
+    }, 150);
+}
 
         requestNotificationPermission();
         updateCounter();
@@ -387,5 +392,6 @@
     </script>
 </body>
 </html>
+
 
 
