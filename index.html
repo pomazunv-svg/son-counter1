@@ -116,28 +116,31 @@
         }
 
         .nav-button {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(110, 193, 228, 0.2);
-            color: white;
-            border: 1px solid #6ec1e4;
-            border-radius: 30px;
-            padding: 10px 24px;
-            font-family: 'Smeshariki Covers', sans-serif;
-            font-size: 1.2rem;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
-            z-index: 9;
-        }
-        .nav-button:hover {
-            background: rgba(110, 193, 228, 0.3);
-            transform: translateX(-50%) scale(1.03);
-        }
+    position: absolute;
+    bottom: 30vh; /* Кнопка на 30% от высоты экрана снизу (примерно в нижней трети) */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(110, 193, 228, 0.2);
+    color: white;
+    border: 1px solid #6ec1e4;
+    border-radius: 30px;
+    padding: 12px 28px;
+    font-family: 'Smeshariki Covers', sans-serif;
+    font-size: 1.3rem;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transition: all 0.25s ease;
+    z-index: 9;
+    white-space: nowrap;
+}
+
+.nav-button:hover {
+    background: rgba(110, 193, 228, 0.35);
+    transform: translateX(-50%) scale(1.04);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
 
         @media (max-width: 390px) {
             h1 { font-size: 2.4rem; }
@@ -387,3 +390,4 @@
     </script>
 </body>
 </html>
+
