@@ -10,143 +10,140 @@
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <style>
-        @font-face {
-            font-family: 'Smeshariki Covers';
-            src: url('SmesharikiCoversRegular.ttf') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
+    @font-face {
+        font-family: 'Smeshariki Covers';
+        src: url('SmesharikiCoversRegular.ttf') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #000 url('bg.jpg') center/cover no-repeat fixed;
-            color: #fff;
-            height: 100vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right)
-                     env(safe-area-inset-bottom) env(safe-area-inset-left);
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out forwards;
-            position: relative;
-        }
+    body {
+        font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #000 url('bg.jpg') center/cover no-repeat fixed;
+        color: #fff;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                 env(safe-area-inset-bottom) env(safe-area-inset-left);
+        overflow: hidden;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        position: relative;
+    }
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
 
-        h1 {
-            font-size: 2.7rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-            letter-spacing: -0.5px;
-        }
+    h1 {
+        font-size: 2.7rem;
+        font-weight: 400;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        letter-spacing: -0.5px;
+    }
 
-        .counter {
-            font-size: 1.65rem;
-            line-height: 1.8;
-            font-weight: 400;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
-            animation: breathe 8s infinite ease-in-out;
-        }
+    .counter {
+        font-size: 1.65rem;
+        line-height: 1.8;
+        font-weight: 400;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+        animation: breathe 8s infinite ease-in-out;
+    }
 
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.015); }
-        }
+    @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.015); }
+    }
 
-        .counter > div {
-            margin: 0.3rem 0;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
+    .counter > div {
+        margin: 0.3rem 0;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
 
-        .counter.updating > div {
-            opacity: 0.5;
-        }
+    .counter.updating > div {
+        opacity: 0.5;
+    }
 
-        .loading-dots .dot {
-            animation: blink 1.4s infinite;
-            display: inline-block;
-        }
-        @keyframes blink {
-            0%, 40% { opacity: 0; }
-            60%, 100% { opacity: 1; }
-        }
+    .loading-dots .dot {
+        animation: blink 1.4s infinite;
+        display: inline-block;
+    }
+    @keyframes blink {
+        0%, 40% { opacity: 0; }
+        60%, 100% { opacity: 1; }
+    }
 
-        .celebration-star {
-            position: absolute;
-            font-size: 1.6rem;
-            opacity: 0;
-            z-index: 10;
-            pointer-events: none;
-            animation: floatStar 2.5s ease-out forwards;
-        }
+    .celebration-star {
+        position: absolute;
+        font-size: 1.6rem;
+        opacity: 0;
+        z-index: 10;
+        pointer-events: none;
+        animation: floatStar 2.5s ease-out forwards;
+    }
 
-        @keyframes floatStar {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-100px) rotate(30deg); opacity: 0; }
-        }
+    @keyframes floatStar {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(-100px) rotate(30deg); opacity: 0; }
+    }
 
-        .celebration-moon {
-            position: absolute;
-            font-size: 2rem;
-            opacity: 0;
-            z-index: 10;
-            pointer-events: none;
-            animation: fallMoon 3s ease-out forwards;
-        }
+    .celebration-moon {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0;
+        z-index: 10;
+        pointer-events: none;
+        animation: fallMoon 3s ease-out forwards;
+    }
 
-        @keyframes fallMoon {
-            0% { transform: translateY(-100px); opacity: 0.9; }
-            100% { transform: translateY(0); opacity: 0; }
-        }
+    @keyframes fallMoon {
+        0% { transform: translateY(-100px); opacity: 0.9; }
+        100% { transform: translateY(0); opacity: 0; }
+    }
 
-        .nav-button {
-    position: absolute;
-    bottom: 30vh; /* Кнопка на 30% от высоты экрана снизу (примерно в нижней трети) */
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(110, 193, 228, 0.2);
-    color: white;
-    border: 1px solid #6ec1e4;
-    border-radius: 30px;
-    padding: 12px 28px;
-    font-family: 'Smeshariki Covers', sans-serif;
-    font-size: 1.3rem;
-    text-decoration: none;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    transition: all 0.25s ease;
-    z-index: 9;
-    white-space: nowrap;
-}
+    /* Стиль кнопки "Интересные факты" внутри счётчика */
+    .fact-button {
+        background: rgba(110, 193, 228, 0.2);
+        border: 1px solid #6ec1e4;
+        border-radius: 30px;
+        padding: 10px 24px;
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+        font-family: 'Smeshariki Covers', sans-serif;
+        font-size: 1.3rem;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.2s ease;
+        margin-top: 0.5rem;
+    }
+    .fact-button:hover {
+        background: rgba(110, 193, 228, 0.3);
+        transform: scale(1.03);
+    }
 
-.nav-button:hover {
-    background: rgba(110, 193, 228, 0.35);
-    transform: translateX(-50%) scale(1.04);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-}
-
-        @media (max-width: 390px) {
-            h1 { font-size: 2.4rem; }
-            .counter { font-size: 1.5rem; }
-        }
-    </style>
+    @media (max-width: 390px) {
+        h1 { font-size: 2.4rem; }
+        .counter { font-size: 1.5rem; }
+        .fact-button { font-size: 1.2rem; padding: 9px 20px; }
+    }
+</style>
 </head>
 <body>
     <h1>Нашему сыночку</h1>
@@ -390,4 +387,5 @@
     </script>
 </body>
 </html>
+
 
