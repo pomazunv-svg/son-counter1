@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Для папы</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+    <style>
+        @font-face {
+            font-family: 'Smeshariki Covers';
+            src: url('SmesharikiCoversRegular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000 url('bg.jpg') center/cover no-repeat fixed;
+            color: #fff;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.4s ease-out;
+        }
+
+        body.fade-in {
+            opacity: 1 !important;
+        }
+
+        body.fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.4s ease-out;
+            pointer-events: none;
+        }
+
+        a.back {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .content {
+            padding: 0 20px;
+            max-width: 90%;
+        }
+
+        .tip-card {
+            background: rgba(138, 43, 226, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+        }
+
+        .card-title {
+            font-size: 2.1rem;
+            margin-bottom: 1.2rem;
+            color: #8a2be2;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
+
+        .tip-text {
+            font-size: 1.7rem;
+            line-height: 1.7;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+            min-height: 2.5em;
+        }
+
+        @media (max-width: 390px) {
+            .card-title { font-size: 1.9rem; }
+            .tip-text { font-size: 1.55rem; }
+            .tip-card { padding: 22px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back">← Назад</a>
+
+    <div class="content">
+        <div class="tip-card">
+            <div class="card-title">Совет для папы</div>
+            <div class="tip-text" id="tip">Загрузка...</div>
+        </div>
+    </div>
+
+    <script>
+        // Массив советов для папы (30 уникальных советов)
+        const dadTips = [
+            "Твоя поддержка маме сегодня важнее всего на свете.",
+            "Ребёнок чувствует твоё присутствие — проводи с ним время каждый день.",
+            "Не бойся ошибаться — каждый отец учится на ходу.",
+            "Твоя уверенность даёт уверенность всей семье.",
+            "Даже 10 минут игр с малышом меняют его день к лучшему.",
+            "Говори о своих чувствах — это делает тебя сильнее.",
+            "Ты пример для своего ребёнка — будь тем, кем хочешь, чтобы он стал.",
+            "Помоги маме с ночным кормлением — это укрепит вашу связь с малышом.",
+            "Твоя роль не менее важна — ты не просто «помощник».",
+            "Сегодня скажи маме слова поддержки — она их точно услышит.",
+            "Доверяй своим инстинктам — ты отец не случайно.",
+            "Научись менять подгузники с закрытыми глазами — это superpower!",
+            "Твой смех заразителен для ребёнка — улыбайся чаще.",
+            "Даже если кажется, что ты ничего не делаешь — твоё присутствие важно.",
+            "Помоги с бытовыми делами — это самый ценный подарок маме.",
+            "Твой ребёнок запомнит твои объятия на всю жизнь.",
+            "Не сравнивай себя с другими отцами — у каждого свой путь.",
+            "Прогулка с коляской — это время для размышлений и связи с ребёнком.",
+            "Ты можешь плакать — настоящие мужчины чувствуют глубоко.",
+            "Сегодня расскажи маме, как ты её ценишь.",
+            "Твоя стабильность — опора для всей семьи.",
+            "Научись спать, когда спит ребёнок — это стратегически важно!",
+            "Ты не обязан знать всё — задавай вопросы и учись.",
+            "Твои руки — это безопасность для малыша.",
+            "Помни: идеальных отцов не существует — есть любящие.",
+            "Даже если сегодня трудно — ты справишься, как всегда.",
+            "Твой ребёнок ищет тебя глазами в толпе — будь рядом.",
+            "Твоя любовь к маме ребёнка учит его, что такое настоящая любовь.",
+            "Сделай сегодня что-то неожиданное для мамы — цветы, кофе, помощь.",
+            "Ты часть чуда — цени каждый момент с семьёй."
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.body.classList.add('fade-in');
+                setTimeout(startTypingAnimation, 350);
+            }, 50);
+
+            const backLink = document.querySelector('.back');
+            if (backLink) {
+                backLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 400);
+                });
+            }
+        });
+
+        // Расчёт дня для выбора совета
+        const birthDate = new Date('2025-09-21');
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const diffTime = today - birthDate;
+        const daysOld = Math.floor(diffTime / (24 * 60 * 60 * 1000)) + 1;
+
+        function typeText(element, text, speed = 45) {
+            element.textContent = '';
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text[i];
+                    i++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, speed);
+        }
+
+        function startTypingAnimation() {
+            const tipIndex = (daysOld - 1) % dadTips.length;
+            const tip = dadTips[tipIndex];
+            typeText(document.getElementById('tip'), tip);
+        }
+    </script>
+</body>
+</html>
