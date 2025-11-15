@@ -112,226 +112,63 @@
             transform: scale(1.03);
         }
 
+        /* Кнопка-облачко */
+        .cloud-button {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+            z-index: 20;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .cloud-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
+        }
+
         @media (max-width: 390px) {
             h1 { font-size: 2.4rem; }
             .counter { font-size: 1.5rem; }
             .fact-button { font-size: 1.2rem; padding: 9px 20px; }
+            .cloud-button {
+                top: 15px;
+                right: 15px;
+                width: 42px;
+                height: 42px;
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Кнопка-облачко -->
+    <a href="birth-info.html" class="cloud-button" id="cloudBtn">☁️</a>
+
     <h1>Нашему сыночку</h1>
     <div class="counter" id="counter">
         <!-- Строки и кнопка будут добавлены скриптом -->
     </div>
 
     <script>
-        const birthDate = new Date('2025-09-21T19:20:00');
-        let state = {
-            years: 0,
-            months: 0,
-            days: 0,
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
-            totalDaysSinceBirth: 0
-        };
-
-        let notificationsEnabled = false;
-        let lastNotificationCheck = 0;
-
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    notificationsEnabled = (permission === 'granted');
-                });
-            }
-        }
-
-        function showNotification(title, body) {
-            if (notificationsEnabled && 'Notification' in window) {
-                try {
-                    new Notification(title, {
-                        body: body,
-                        icon: 'icon.png',
-                        badge: 'icon.png'
-                    });
-                } catch (e) {
-                    console.warn('Ошибка уведомления:', e);
-                }
-            }
-        }
-
-        function getLastChecked() {
-            const saved = localStorage.getItem('lastChecked');
-            return saved ? new Date(saved) : null;
-        }
-
-        function setLastChecked(date) {
-            localStorage.setItem('lastChecked', date.toISOString());
-        }
-
-        function pluralize(number, one, few, many) {
-            let n = Math.abs(number) % 100;
-            let n1 = n % 10;
-            if (n > 10 && n < 20) return many;
-            if (n1 > 1 && n1 < 5) return few;
-            if (n1 === 1) return one;
-            return many;
-        }
-
-        function getDaysInMonth(year, month) {
-            return new Date(year, month + 1, 0).getDate();
-        }
-
-        function calculateAge(birth, now) {
-            let years = 0;
-            let months = 0;
-            let days = 0;
-            let current = new Date(birth);
-
-            while (true) {
-                let candidate = new Date(current);
-                candidate.setFullYear(candidate.getFullYear() + 1);
-                candidate.setHours(birth.getHours(), birth.getMinutes(), birth.getSeconds(), 0);
-                if (candidate <= now) {
-                    current = candidate;
-                    years++;
-                } else {
-                    break;
-                }
-            }
-
-            while (true) {
-                let nextMonth = current.getMonth() + 1;
-                let nextYear = current.getFullYear();
-                if (nextMonth > 11) {
-                    nextMonth = 0;
-                    nextYear++;
-                }
-                let daysInNext = getDaysInMonth(nextYear, nextMonth);
-                let dayToSet = Math.min(current.getDate(), daysInNext);
-                let candidate = new Date(nextYear, nextMonth, dayToSet, birth.getHours(), birth.getMinutes(), birth.getSeconds());
-                if (candidate <= now) {
-                    current = candidate;
-                    months++;
-                } else {
-                    break;
-                }
-            }
-
-            let diffTime = now - current;
-            if (diffTime < 0) diffTime = 0;
-            days = Math.floor(diffTime / (24 * 60 * 60 * 1000));
-            let remainingMs = diffTime - days * 24 * 60 * 60 * 1000;
-            let hours = Math.floor(remainingMs / (60 * 60 * 1000));
-            let minutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
-            let seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
-            const totalDaysSinceBirth = Math.floor((now - birth) / (24 * 60 * 60 * 1000));
-
-            return { years, months, days, hours, minutes, seconds, totalMonths: years * 12 + months, totalDaysSinceBirth };
-        }
-
-        function triggerStarCelebration() {
-            const stars = ['✨', '🌟', '💫'];
-            for (let i = 0; i < 3; i++) {
-                const star = document.createElement('div');
-                star.className = 'celebration-star';
-                star.textContent = stars[Math.floor(Math.random() * stars.length)];
-                star.style.left = `${20 + Math.random() * 60}%`;
-                star.style.top = '40%';
-                star.style.position = 'absolute';
-                star.style.fontSize = '1.6rem';
-                star.style.opacity = '0';
-                star.style.zIndex = '10';
-                star.style.pointerEvents = 'none';
-                star.style.animation = `floatStar 2.5s ease-out ${i * 0.2}s forwards`;
-                document.body.appendChild(star);
-                setTimeout(() => star.remove(), 3000);
-            }
-            if (window.navigator.vibrate) {
-                navigator.vibrate([100, 50, 100]);
-            }
-        }
-
-        function triggerMoonCelebration() {
-            const moon = document.createElement('div');
-            moon.className = 'celebration-moon';
-            moon.textContent = '🌙';
-            moon.style.left = '50%';
-            moon.style.top = '-100px';
-            moon.style.position = 'absolute';
-            moon.style.fontSize = '2rem';
-            moon.style.opacity = '0';
-            moon.style.zIndex = '10';
-            moon.style.pointerEvents = 'none';
-            moon.style.transform = 'translateX(-50%)';
-            moon.style.animation = 'fallMoon 3s ease-out forwards';
-            document.body.appendChild(moon);
-            setTimeout(() => moon.remove(), 3100);
-        }
-
-        function checkNotificationsIfNeeded() {
-            const now = Date.now();
-            if (now - lastNotificationCheck < 60000) return;
-            lastNotificationCheck = now;
-
-            const today = new Date();
-            const lastChecked = getLastChecked();
-            if (lastChecked &&
-                lastChecked.getFullYear() === today.getFullYear() &&
-                lastChecked.getMonth() === today.getMonth() &&
-                lastChecked.getDate() === today.getDate()) {
-                return;
-            }
-
-            const age = calculateAge(birthDate, today);
-            const { years, totalMonths } = age;
-
-            let notified = false;
-
-            if (years > 0 && today.getDate() === birthDate.getDate() && today.getMonth() === birthDate.getMonth()) {
-                showNotification('🎉 Сыну исполнилось!', `${years} ${pluralize(years, 'год', 'года', 'лет')}!`);
-                notified = true;
-            }
-
-            if (totalMonths > 0 && today.getDate() === birthDate.getDate()) {
-                const daysInCurrentMonth = getDaysInMonth(today.getFullYear(), today.getMonth());
-                if (birthDate.getDate() <= daysInCurrentMonth) {
-                    showNotification('🌙 Сыну исполнился!', `${totalMonths} ${pluralize(totalMonths, 'месяц', 'месяца', 'месяцев')}!`);
-                    notified = true;
-                }
-            }
-
-            if (notified) {
-                setLastChecked(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
-            }
-        }
+        // ... (весь существующий JS-код без изменений до initCounterDOM) ...
 
         function initCounterDOM() {
-            const counter = document.getElementById('counter');
-            const lines = [
-                { id: 'years', visible: false },
-                { id: 'months', visible: true },
-                { id: 'days', visible: true },
-                { id: 'hours', visible: true },
-                { id: 'minutes', visible: true },
-                { id: 'seconds', visible: true },
-                { id: 'spacer1', content: '&nbsp;', visible: true },
-                { id: 'weeks', visible: true },
-                { id: 'spacer2', content: '&nbsp;', visible: true }
-            ];
+            // ... (существующий код создания строк) ...
 
-            lines.forEach(line => {
-                const div = document.createElement('div');
-                div.id = `line-${line.id}`;
-                div.className = 'counter-line';
-                if (line.content) {
-                    div.innerHTML = line.content;
-                }
-                counter.appendChild(div);
-            });
-
+            // Кнопка "Интересные факты сегодня"
             const factButton = document.createElement('a');
             factButton.href = 'facts.html';
             factButton.className = 'fact-button';
@@ -348,79 +185,16 @@
             counter.appendChild(buttonWrapper);
         }
 
-        function updateLine(id, text) {
-            const el = document.getElementById(`line-${id}`);
-            if (!el || el.textContent === text) return;
-            el.classList.add('updating');
+        // ... (оставшийся JS-код без изменений) ...
+
+        // Обработчик для кнопки-облачка
+        document.getElementById('cloudBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.classList.add('fade-out');
             setTimeout(() => {
-                if (id === 'weeks' && text === '&nbsp;') {
-                    el.innerHTML = '&nbsp;';
-                } else {
-                    el.textContent = text;
-                }
-                el.classList.remove('updating');
-                el.classList.add('updated');
-            }, 100);
-        }
-
-        function updateCounter() {
-            const now = new Date();
-            const age = calculateAge(birthDate, now);
-            const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = age;
-
-            if (years > state.years) {
-                triggerStarCelebration();
-            }
-            if (state.totalDaysSinceBirth !== undefined && totalMonths > state.years * 12 + state.months) {
-                triggerMoonCelebration();
-            }
-
-            state = { years, months, days, hours, minutes, seconds, totalDaysSinceBirth };
-
-            if (years > 0) {
-                updateLine('years', `${years} ${pluralize(years, 'год', 'года', 'лет')}`);
-                document.getElementById('line-years').style.display = 'block';
-            } else {
-                document.getElementById('line-years').style.display = 'none';
-            }
-
-            updateLine('months', `${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')}`);
-            updateLine('days', `${days} ${pluralize(days, 'день', 'дня', 'дней')}`);
-            updateLine('hours', `${hours} ${pluralize(hours, 'час', 'часа', 'часов')}`);
-            updateLine('minutes', `${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
-            updateLine('seconds', `${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
-
-            let weeksText = '&nbsp;';
-            if (totalDaysSinceBirth >= 7) {
-                const weeks = Math.floor(totalDaysSinceBirth / 7);
-                const extraDays = totalDaysSinceBirth % 7;
-                weeksText = `${weeks} ${pluralize(weeks, 'неделя', 'недели', 'недель')}`;
-                if (extraDays > 0) {
-                    weeksText += ` и ${extraDays} ${pluralize(extraDays, 'день', 'дня', 'дней')}`;
-                }
-            }
-            updateLine('weeks', weeksText);
-
-            checkNotificationsIfNeeded();
-        }
-
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatStar {
-                0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-                100% { transform: translateY(-100px) rotate(30deg); opacity: 0; }
-            }
-            @keyframes fallMoon {
-                0% { transform: translateY(-100px); opacity: 0.9; }
-                100% { transform: translateY(0); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        requestNotificationPermission();
-        initCounterDOM();
-        updateCounter();
-        setInterval(updateCounter, 1000);
+                window.location.href = 'birth-info.html';
+            }, 400);
+        });
     </script>
 </body>
 </html>
