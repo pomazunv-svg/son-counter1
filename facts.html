@@ -72,7 +72,6 @@
             margin-bottom: 1.5rem;
             letter-spacing: -0.5px;
             color: white;
-            
         }
 
         .fact-text {
@@ -81,6 +80,7 @@
             margin-bottom: 1rem;
             color: white;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+            min-height: 2.2em; /* предотвращает "прыжок" при печати */
         }
 
         .day-info {
@@ -110,26 +110,40 @@
 
     <script src="facts-full.js"></script>
     <script>
-        // Дата рождения (без времени — только дата)
         const birthDate = new Date('2025-09-21');
 
-        // Сегодняшняя дата (в 00:00 текущего дня)
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-        // Разница в миллисекундах
         const diffTime = today - birthDate;
-        const daysOld = Math.floor(diffTime / (24 * 60 * 60 * 1000)) + 1; // +1, чтобы день рождения = день 1
+        const daysOld = Math.floor(diffTime / (24 * 60 * 60 * 1000)) + 1;
 
-        if (typeof facts !== 'undefined' && facts.length > 0) {
-            const factIndex = (daysOld - 1) % facts.length;
-            const fact = facts[factIndex];
-            document.getElementById('fact').textContent = fact;
-            document.getElementById('dayInfo').textContent = `День №${daysOld}`;
-        } else {
-            document.getElementById('fact').textContent = "Факты не загружены.";
+        // Функция анимации печатания
+        function typeText(element, text, speed = 40) {
+            element.textContent = '';
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text[i];
+                    i++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, speed);
         }
+
+        // Обновляем день сразу
+        document.getElementById('dayInfo').textContent = `День №${daysOld}`;
+
+        // Ждём загрузки facts (если скрипт асинхронный, можно обернуть в onload, но ваш подключён синхронно)
+        setTimeout(() => {
+            if (typeof facts !== 'undefined' && Array.isArray(facts) && facts.length > 0) {
+                const factIndex = (daysOld - 1) % facts.length;
+                const fact = facts[factIndex];
+                typeText(document.getElementById('fact'), fact);
+            } else {
+                document.getElementById('fact').textContent = 'Факты не загружены.';
+            }
+        }, 200); // небольшая задержка для плавности входа
     </script>
 </body>
 </html>
-
