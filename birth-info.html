@@ -40,7 +40,7 @@
             overflow: hidden;
             position: relative;
             opacity: 0;
-            transition: opacity 0.5s ease-out;
+            transition: opacity 0.4s ease-out;
         }
 
         body.fade-in {
@@ -67,24 +67,17 @@
         .content {
             padding: 0 20px;
             max-width: 90%;
+            margin-top: -20px; /* компенсируем отсутствие заголовка */
         }
 
         .info-card {
             background: rgba(0, 15, 30, 0.7);
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(110, 193, 228, 0.3);
-        }
-
-        h1 {
-            font-size: 2.4rem;
-            margin-bottom: 1.8rem;
-            letter-spacing: -0.5px;
-            color: white;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
 
         .info-item {
@@ -93,7 +86,7 @@
             margin: 0.6rem 0;
             color: white;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
-            min-height: 2.2em; /* Фиксируем высоту для плавности */
+            min-height: 2.1em;
         }
 
         .info-label {
@@ -103,16 +96,15 @@
 
         .date-info {
             font-size: 1.9rem;
-            margin-top: 0.5rem;
             color: #ffd166;
             text-shadow: 0 2px 6px rgba(0,0,0,0.7);
         }
 
         @media (max-width: 390px) {
-            h1 { font-size: 2.1rem; }
             .info-item { font-size: 1.55rem; }
             .date-info { font-size: 1.7rem; }
-            .info-card { padding: 25px 20px; }
+            .info-card { padding: 22px 20px; }
+            .content { margin-top: -15px; }
         }
     </style>
 </head>
@@ -121,7 +113,6 @@
 
     <div class="content">
         <div class="info-card">
-            <h1>Наше солнышко родилось</h1>
             <div class="info-item">
                 <span class="info-label">Имя:</span> <span id="name"></span>
             </div>
@@ -141,16 +132,19 @@
     </div>
 
     <script>
+        // 1. Гарантируем полную непрозрачность при загрузке
+        document.body.style.opacity = '0';
+
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Сначала плавное появление страницы
+            // 2. Плавное появление страницы
             setTimeout(() => {
                 document.body.classList.add('fade-in');
                 
-                // 2. Только после появления страницы запускаем печатание
-                setTimeout(startTypingAnimation, 300);
+                // 3. Запуск печатания ТОЛЬКО после полного появления страницы
+                setTimeout(startTypingAnimation, 350);
             }, 50);
 
-            // Плавный уход по кнопке "Назад"
+            // Обработка кнопки "Назад"
             const backLink = document.querySelector('.back');
             if (backLink) {
                 backLink.addEventListener('click', (e) => {
@@ -163,11 +157,9 @@
             }
         });
 
-        // Анимация печатания
         function typeText(element, text, speed = 45, onComplete = null) {
+            element.textContent = '';
             let i = 0;
-            element.textContent = ''; // Гарантируем, что поле пустое
-            
             const timer = setInterval(() => {
                 if (i < text.length) {
                     element.textContent += text[i];
@@ -179,7 +171,6 @@
             }, speed);
         }
 
-        // Запуск анимации печатания по порядку
         function startTypingAnimation() {
             const nameEl = document.getElementById('name');
             const dateEl = document.getElementById('date');
@@ -189,16 +180,16 @@
 
             // Имя
             typeText(nameEl, 'Помазун Павел Владиславович', 40, () => {
-                // Дата после завершения имени
+                // Дата
                 setTimeout(() => {
                     typeText(dateEl, '21 сентября 2025', 45, () => {
-                        // Время после даты
+                        // Время
                         setTimeout(() => {
                             typeText(timeEl, '19:20', 50, () => {
-                                // Вес после времени
+                                // Вес
                                 setTimeout(() => {
                                     typeText(weightEl, '4210 г', 60, () => {
-                                        // Рост после веса
+                                        // Рост
                                         setTimeout(() => {
                                             typeText(heightEl, '54 см', 60);
                                         }, 200);
