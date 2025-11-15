@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Информация о родах</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+    <style>
+        @font-face {
+            font-family: 'Smeshariki Covers';
+            src: url('SmesharikiCoversRegular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Smeshariki Covers', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000 url('bg.jpg') center/cover no-repeat fixed;
+            color: #fff;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+
+        body.fade-in {
+            opacity: 1 !important;
+        }
+
+        body.fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.4s ease-out;
+            pointer-events: none;
+        }
+
+        a.back {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .content {
+            padding: 0 20px;
+            max-width: 90%;
+        }
+
+        .info-card {
+            background: rgba(0, 15, 30, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(110, 193, 228, 0.3);
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 1.8rem;
+            letter-spacing: -0.5px;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
+
+        .info-item {
+            font-size: 1.7rem;
+            line-height: 1.8;
+            margin: 0.6rem 0;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+        }
+
+        .info-label {
+            color: #6ec1e4;
+            font-weight: 500;
+        }
+
+        .date-info {
+            font-size: 1.9rem;
+            margin-top: 0.5rem;
+            color: #ffd166;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+        }
+
+        @media (max-width: 390px) {
+            h1 { font-size: 2.1rem; }
+            .info-item { font-size: 1.55rem; }
+            .date-info { font-size: 1.7rem; }
+            .info-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back">← Назад</a>
+
+    <div class="content">
+        <div class="info-card">
+            <h1>Наше солнышко родилось</h1>
+            <div class="info-item">
+                <span class="info-label">Имя:</span> <span id="name">Помазун Павел Владиславович</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Дата:</span> <span class="date-info" id="date">21 сентября 2025</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Время:</span> <span id="time">19:20</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Вес:</span> <span id="weight">4210 г</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Рост:</span> <span id="height">54 см</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Появление страницы
+            setTimeout(() => {
+                document.body.classList.add('fade-in');
+            }, 50);
+
+            // Плавный уход по кнопке "Назад"
+            const backLink = document.querySelector('.back');
+            if (backLink) {
+                backLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 400);
+                });
+            }
+        });
+
+        // Анимация печатания для каждого элемента
+        function typeText(element, text, speed = 45, delay = 0) {
+            setTimeout(() => {
+                element.textContent = '';
+                let i = 0;
+                const timer = setInterval(() => {
+                    if (i < text.length) {
+                        element.textContent += text[i];
+                        i++;
+                    } else {
+                        clearInterval(timer);
+                    }
+                }, speed);
+            }, delay);
+        }
+
+        // Запуск анимации с задержками
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameEl = document.getElementById('name');
+            const dateEl = document.getElementById('date');
+            const timeEl = document.getElementById('time');
+            const weightEl = document.getElementById('weight');
+            const heightEl = document.getElementById('height');
+
+            // Сначала имя
+            typeText(nameEl, 'Помазун Павел Владиславович', 40, 300);
+            
+            // Потом дата через 400мс
+            typeText(dateEl, '21 сентября 2025', 45, 700);
+            
+            // Время через 300мс после даты
+            typeText(timeEl, '19:20', 50, 1100);
+            
+            // Вес через 300мс
+            typeText(weightEl, '4210 г', 60, 1400);
+            
+            // Рост через 300мс
+            typeText(heightEl, '54 см', 60, 1700);
+        });
+    </script>
+</body>
+</html>
