@@ -93,6 +93,7 @@
             margin: 0.6rem 0;
             color: white;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+            min-height: 2.2em; /* Фиксируем высоту для плавности */
         }
 
         .info-label {
@@ -122,28 +123,31 @@
         <div class="info-card">
             <h1>Наше солнышко родилось</h1>
             <div class="info-item">
-                <span class="info-label">Имя:</span> <span id="name">Помазун Павел Владиславович</span>
+                <span class="info-label">Имя:</span> <span id="name"></span>
             </div>
             <div class="info-item">
-                <span class="info-label">Дата:</span> <span class="date-info" id="date">21 сентября 2025</span>
+                <span class="info-label">Дата:</span> <span class="date-info" id="date"></span>
             </div>
             <div class="info-item">
-                <span class="info-label">Время:</span> <span id="time">19:20</span>
+                <span class="info-label">Время:</span> <span id="time"></span>
             </div>
             <div class="info-item">
-                <span class="info-label">Вес:</span> <span id="weight">4210 г</span>
+                <span class="info-label">Вес:</span> <span id="weight"></span>
             </div>
             <div class="info-item">
-                <span class="info-label">Рост:</span> <span id="height">54 см</span>
+                <span class="info-label">Рост:</span> <span id="height"></span>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Появление страницы
+            // 1. Сначала плавное появление страницы
             setTimeout(() => {
                 document.body.classList.add('fade-in');
+                
+                // 2. Только после появления страницы запускаем печатание
+                setTimeout(startTypingAnimation, 300);
             }, 50);
 
             // Плавный уход по кнопке "Назад"
@@ -159,45 +163,53 @@
             }
         });
 
-        // Анимация печатания для каждого элемента
-        function typeText(element, text, speed = 45, delay = 0) {
-            setTimeout(() => {
-                element.textContent = '';
-                let i = 0;
-                const timer = setInterval(() => {
-                    if (i < text.length) {
-                        element.textContent += text[i];
-                        i++;
-                    } else {
-                        clearInterval(timer);
-                    }
-                }, speed);
-            }, delay);
+        // Анимация печатания
+        function typeText(element, text, speed = 45, onComplete = null) {
+            let i = 0;
+            element.textContent = ''; // Гарантируем, что поле пустое
+            
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text[i];
+                    i++;
+                } else {
+                    clearInterval(timer);
+                    if (onComplete) onComplete();
+                }
+            }, speed);
         }
 
-        // Запуск анимации с задержками
-        document.addEventListener('DOMContentLoaded', () => {
+        // Запуск анимации печатания по порядку
+        function startTypingAnimation() {
             const nameEl = document.getElementById('name');
             const dateEl = document.getElementById('date');
             const timeEl = document.getElementById('time');
             const weightEl = document.getElementById('weight');
             const heightEl = document.getElementById('height');
 
-            // Сначала имя
-            typeText(nameEl, 'Помазун Павел Владиславович', 40, 300);
-            
-            // Потом дата через 400мс
-            typeText(dateEl, '21 сентября 2025', 45, 700);
-            
-            // Время через 300мс после даты
-            typeText(timeEl, '19:20', 50, 1100);
-            
-            // Вес через 300мс
-            typeText(weightEl, '4210 г', 60, 1400);
-            
-            // Рост через 300мс
-            typeText(heightEl, '54 см', 60, 1700);
-        });
+            // Имя
+            typeText(nameEl, 'Помазун Павел Владиславович', 40, () => {
+                // Дата после завершения имени
+                setTimeout(() => {
+                    typeText(dateEl, '21 сентября 2025', 45, () => {
+                        // Время после даты
+                        setTimeout(() => {
+                            typeText(timeEl, '19:20', 50, () => {
+                                // Вес после времени
+                                setTimeout(() => {
+                                    typeText(weightEl, '4210 г', 60, () => {
+                                        // Рост после веса
+                                        setTimeout(() => {
+                                            typeText(heightEl, '54 см', 60);
+                                        }, 200);
+                                    });
+                                }, 200);
+                            });
+                        }, 200);
+                    });
+                }, 200);
+            });
+        }
     </script>
 </body>
 </html>
