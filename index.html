@@ -90,12 +90,21 @@
             transform: scale(1);
         }
 
-        .fact-button {
+        /* Контейнер для трёх кнопок */
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 1.2rem;
+            max-width: 95%;
+        }
+
+        .action-button {
             background: rgba(110, 193, 228, 0.2);
             border: 1px solid #6ec1e4;
             border-radius: 30px;
-            padding: 10px 24px;
-            display: inline-block;
+            padding: 10px 20px;
             text-decoration: none;
             color: white;
             font-family: 'Smeshariki Covers', sans-serif;
@@ -105,11 +114,29 @@
             -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             transition: all 0.2s ease;
-            margin-top: 0.5rem;
+            flex: 1;
+            min-width: 110px;
+            text-align: center;
         }
-        .fact-button:hover {
+        .action-button:hover {
             background: rgba(110, 193, 228, 0.3);
             transform: scale(1.03);
+        }
+
+        .mom-button {
+            background: rgba(255, 105, 180, 0.2);
+            border-color: #ff69b4;
+        }
+        .mom-button:hover {
+            background: rgba(255, 105, 180, 0.3);
+        }
+
+        .dad-button {
+            background: rgba(138, 43, 226, 0.2);
+            border-color: #8a2be2;
+        }
+        .dad-button:hover {
+            background: rgba(138, 43, 226, 0.3);
         }
 
         /* Кнопка-облачко */
@@ -142,7 +169,11 @@
         @media (max-width: 390px) {
             h1 { font-size: 2.4rem; }
             .counter { font-size: 1.5rem; }
-            .fact-button { font-size: 1.2rem; padding: 9px 20px; }
+            .action-button { 
+                font-size: 1.15rem; 
+                padding: 8px 15px;
+                min-width: 95px;
+            }
             .cloud-button {
                 top: 15px;
                 right: 15px;
@@ -159,7 +190,7 @@
 
     <h1>Нашему сыночку</h1>
     <div class="counter" id="counter">
-        <!-- Строки и кнопка будут добавлены скриптом -->
+        <!-- Строки будут добавлены скриптом -->
     </div>
 
     <script>
@@ -369,20 +400,53 @@
                 counter.appendChild(div);
             });
 
-            const factButton = document.createElement('a');
-            factButton.href = 'facts.html';
-            factButton.className = 'fact-button';
-            factButton.textContent = 'Интересные факты сегодня';
-            factButton.addEventListener('click', (e) => {
+            // Контейнер для трёх кнопок
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'buttons-container';
+
+            // Кнопка "Для мамы"
+            const momButton = document.createElement('a');
+            momButton.href = 'for-mom.html';
+            momButton.className = 'action-button mom-button';
+            momButton.textContent = 'Для мамы';
+            momButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = 'for-mom.html';
+                }, 400);
+            });
+
+            // Кнопка "Для папы"
+            const dadButton = document.createElement('a');
+            dadButton.href = 'for-dad.html';
+            dadButton.className = 'action-button dad-button';
+            dadButton.textContent = 'Для папы';
+            dadButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = 'for-dad.html';
+                }, 400);
+            });
+
+            // Кнопка "Факты!"
+            const factsButton = document.createElement('a');
+            factsButton.href = 'facts.html';
+            factsButton.className = 'action-button';
+            factsButton.textContent = 'Факты!';
+            factsButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 document.body.classList.add('fade-out');
                 setTimeout(() => {
                     window.location.href = 'facts.html';
                 }, 400);
             });
-            const buttonWrapper = document.createElement('div');
-            buttonWrapper.appendChild(factButton);
-            counter.appendChild(buttonWrapper);
+
+            buttonsContainer.appendChild(momButton);
+            buttonsContainer.appendChild(dadButton);
+            buttonsContainer.appendChild(factsButton);
+            counter.appendChild(buttonsContainer);
         }
 
         function updateLine(id, text) {
@@ -454,13 +518,11 @@
         `;
         document.head.appendChild(style);
 
-        // КРИТИЧЕСКИ ВАЖНЫЕ ВЫЗОВЫ - НЕ УДАЛЯТЬ!
         requestNotificationPermission();
         initCounterDOM();
         updateCounter();
         setInterval(updateCounter, 1000);
 
-        // Обработчик для кнопки-облачка
         document.getElementById('cloudBtn').addEventListener('click', (e) => {
             e.preventDefault();
             document.body.classList.add('fade-out');
