@@ -95,17 +95,9 @@
             min-height: 2.2em;
         }
 
-        .day-info {
-            font-size: 1.3rem;
-            opacity: 0.95;
-            color: white;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
-        }
-
         @media (max-width: 390px) {
             h1 { font-size: 2.1rem; }
             .fact-text { font-size: 1.5rem; }
-            .day-info { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -116,19 +108,16 @@
         <div class="fact-card">
             <h1>Интересный факт</h1>
             <div class="fact-text" id="fact">Загрузка...</div>
-            <div class="day-info" id="dayInfo">День №...</div>
         </div>
     </div>
 
     <script src="facts-full.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Появление страницы
             setTimeout(() => {
                 document.body.classList.add('fade-in');
             }, 50);
 
-            // Плавный уход по кнопке "Назад"
             const backLink = document.querySelector('.back');
             if (backLink) {
                 backLink.addEventListener('click', (e) => {
@@ -159,8 +148,6 @@
                 }
             }, speed);
         }
-
-        document.getElementById('dayInfo').textContent = `День №${daysOld}`;
 
         setTimeout(() => {
             if (typeof facts !== 'undefined' && Array.isArray(facts) && facts.length > 0) {
