@@ -47,6 +47,12 @@
             to { opacity: 1; }
         }
 
+        body.fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.4s ease-out;
+            pointer-events: none;
+        }
+
         h1 {
             font-size: 2.7rem;
             font-weight: 400;
@@ -106,12 +112,6 @@
             transform: scale(1.03);
         }
 
-        /* Плавный уход при переходе */
-        body.transitioning {
-            opacity: 0;
-            pointer-events: none;
-        }
-
         @media (max-width: 390px) {
             h1 { font-size: 2.4rem; }
             .counter { font-size: 1.5rem; }
@@ -122,7 +122,7 @@
 <body>
     <h1>Нашему сыночку</h1>
     <div class="counter" id="counter">
-        <!-- Строки будут добавлены сюда -->
+        <!-- Строки и кнопка будут добавлены скриптом -->
     </div>
 
     <script>
@@ -137,11 +137,9 @@
             totalDaysSinceBirth: 0
         };
 
-        let lastFullUpdate = 0;
         let notificationsEnabled = false;
         let lastNotificationCheck = 0;
 
-        // === Утилиты ===
         function requestNotificationPermission() {
             if ('Notification' in window) {
                 Notification.requestPermission().then(permission => {
@@ -310,7 +308,6 @@
             }
         }
 
-        // === Создание структуры счётчика один раз ===
         function initCounterDOM() {
             const counter = document.getElementById('counter');
             const lines = [
@@ -341,10 +338,10 @@
             factButton.textContent = 'Интересные факты сегодня';
             factButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                document.body.classList.add('transitioning');
+                document.body.classList.add('fade-out');
                 setTimeout(() => {
-                    window.location.href = factButton.href;
-                }, 300);
+                    window.location.href = 'facts.html';
+                }, 400);
             });
             const buttonWrapper = document.createElement('div');
             buttonWrapper.appendChild(factButton);
@@ -371,7 +368,6 @@
             const age = calculateAge(birthDate, now);
             const { years, months, days, hours, minutes, seconds, totalMonths, totalDaysSinceBirth } = age;
 
-            // Празднования
             if (years > state.years) {
                 triggerStarCelebration();
             }
@@ -379,10 +375,8 @@
                 triggerMoonCelebration();
             }
 
-            // Обновляем состояние
             state = { years, months, days, hours, minutes, seconds, totalDaysSinceBirth };
 
-            // Обновляем только нужные строки
             if (years > 0) {
                 updateLine('years', `${years} ${pluralize(years, 'год', 'года', 'лет')}`);
                 document.getElementById('line-years').style.display = 'block';
@@ -396,7 +390,6 @@
             updateLine('minutes', `${minutes} ${pluralize(minutes, 'минута', 'минуты', 'минут')}`);
             updateLine('seconds', `${seconds} ${pluralize(seconds, 'секунда', 'секунды', 'секунд')}`);
 
-            // Недели
             let weeksText = '&nbsp;';
             if (totalDaysSinceBirth >= 7) {
                 const weeks = Math.floor(totalDaysSinceBirth / 7);
@@ -411,13 +404,6 @@
             checkNotificationsIfNeeded();
         }
 
-        // === Запуск ===
-        requestNotificationPermission();
-        initCounterDOM();
-        updateCounter(); // первый запуск
-        setInterval(updateCounter, 1000);
-
-        // === Анимации для праздников (встроены для изоляции) ===
         const style = document.createElement('style');
         style.textContent = `
             @keyframes floatStar {
@@ -430,6 +416,11 @@
             }
         `;
         document.head.appendChild(style);
+
+        requestNotificationPermission();
+        initCounterDOM();
+        updateCounter();
+        setInterval(updateCounter, 1000);
     </script>
 </body>
 </html>
